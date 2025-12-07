@@ -25,7 +25,7 @@ export default function SettingsScreen() {
   };
 
   const settingsOptions = [
-    { id: '1', title: 'Profile Settings', icon: 'person-outline', onPress: () => router.push('/(screens)/profile') },
+    { id: '1', title: 'Profile Settings', icon: 'person-outline', onPress: () => router.push('/profile') },
     { id: '2', title: 'Availability', icon: 'time-outline', onPress: () => router.push('/(screens)/availability') },
     { id: '3', title: 'Notifications', icon: 'notifications-outline', onPress: () => router.push('/(screens)/notifications-settings') },
     { id: '4', title: 'Payment Settings', icon: 'card-outline', onPress: () => router.push('/(screens)/payment-settings') },

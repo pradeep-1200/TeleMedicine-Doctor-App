@@ -8,7 +8,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../../../constants/colors';
 import { useAppointments } from '../../../contexts/AppointmentContext';
 
@@ -50,11 +50,11 @@ export default function AppointmentDetailsScreen() {
           onPress={() => toggleSection(sectionKey)}
         >
           <View style={styles.sectionTitleContainer}>
-            <Icon name={icon} size={20} color={colors.primary} />
+            <Ionicons name={icon as any} size={20} color={colors.primary} />
             <Text style={styles.sectionTitle}>{title}</Text>
           </View>
-          <Icon
-            name={isExpanded ? 'expand-less' : 'expand-more'}
+          <Ionicons
+            name={isExpanded ? 'chevron-up' : 'chevron-down'}
             size={24}
             color={colors.textSecondary}
           />
@@ -67,8 +67,8 @@ export default function AppointmentDetailsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Icon name="arrow-back" size={24} color={colors.text} />
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={24} color={colors.white} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Appointment Details</Text>
         <View style={{ width: 24 }} />
@@ -156,7 +156,7 @@ export default function AppointmentDetailsScreen() {
           'folder',
           'reports',
           <View style={styles.uploadSection}>
-            <Icon name="cloud-upload" size={48} color={colors.gray[400]} />
+            <Ionicons name="cloud-upload" size={48} color={colors.gray[400]} />
             <Text style={styles.uploadText}>No medical reports uploaded</Text>
             <TouchableOpacity style={styles.uploadButton}>
               <Text style={styles.uploadButtonText}>Upload Reports</Text>
@@ -192,16 +192,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     paddingVertical: 16,
-    backgroundColor: colors.white,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    backgroundColor: colors.primary,
+  },
+  backButton: {
+    padding: 4,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: colors.text,
+    fontSize: 20,
+    fontWeight: '600',
+    color: colors.white,
+    flex: 1,
+    textAlign: 'center',
   },
   content: {
     flex: 1,

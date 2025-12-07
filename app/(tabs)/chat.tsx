@@ -30,13 +30,7 @@ export default function ChatScreen() {
   ];
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Chats</Text>
-        <TouchableOpacity>
-          <Ionicons name="search" size={24} color={colors.text} />
-        </TouchableOpacity>
-      </View>
+    <SafeAreaView style={styles.container} edges={['top']}>
 
       <ScrollView style={styles.chatsList}>
         {chats.map((chat) => (
@@ -72,18 +66,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: colors.text,
-  },
+
   chatsList: {
     flex: 1,
   },

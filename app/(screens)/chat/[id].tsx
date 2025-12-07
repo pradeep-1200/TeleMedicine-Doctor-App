@@ -71,12 +71,12 @@ export default function ChatDetailScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color={colors.text} />
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={24} color={colors.white} />
         </TouchableOpacity>
         <Text style={styles.patientName}>Jay Patil</Text>
-        <TouchableOpacity>
-          <Ionicons name="call" size={24} color={colors.primary} />
+        <TouchableOpacity style={styles.callButton}>
+          <Ionicons name="call" size={24} color={colors.white} />
         </TouchableOpacity>
       </View>
 
@@ -119,14 +119,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    paddingVertical: 16,
+    backgroundColor: colors.primary,
+  },
+  backButton: {
+    padding: 4,
   },
   patientName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: colors.text,
+    fontSize: 20,
+    fontWeight: '600',
+    color: colors.white,
+    flex: 1,
+    textAlign: 'center',
+  },
+  callButton: {
+    padding: 4,
   },
   messagesList: {
     flex: 1,

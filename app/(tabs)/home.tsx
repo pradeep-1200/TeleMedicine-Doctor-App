@@ -47,9 +47,6 @@ export default function HomeScreen() {
           <Text style={styles.greeting}>Good Morning</Text>
           <Text style={styles.doctorName}>Dr. Prem</Text>
         </View>
-        <TouchableOpacity style={styles.notificationButton}>
-          <Ionicons name="notifications" size={24} color={colors.primary} />
-        </TouchableOpacity>
       </View>
 
       <View style={styles.statsContainer}>
@@ -61,7 +58,7 @@ export default function HomeScreen() {
           <Text style={styles.statNumber}>
             {appointments.filter(a => a.status === 'booked-paid').length}
           </Text>
-          <Text style={styles.statLabel}>Today's Appointments</Text>
+          <Text style={styles.statLabel}>Today&apos;s Appointments</Text>
         </View>
       </View>
 
