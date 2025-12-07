@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { colors } from '../constants/colors';
 import { Appointment } from '../types';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { Ionicons } from '@expo/vector-icons';
 
 interface AppointmentCardProps {
   appointment: Appointment;
@@ -37,19 +37,19 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
 
       <View style={styles.details}>
         <View style={styles.detailItem}>
-          <Icon name="calendar-today" size={16} color={colors.textSecondary} />
+          <Ionicons name="calendar" size={16} color={colors.textSecondary} />
           <Text style={styles.detailText}>{appointment.date}</Text>
         </View>
         <View style={styles.detailItem}>
-          <Icon name="access-time" size={16} color={colors.textSecondary} />
+          <Ionicons name="time" size={16} color={colors.textSecondary} />
           <Text style={styles.detailText}>{appointment.time}</Text>
         </View>
         <View style={styles.detailItem}>
-          <Icon name="currency-rupee" size={16} color={colors.textSecondary} />
+          <Ionicons name="cash" size={16} color={colors.textSecondary} />
           <Text style={styles.detailText}>INR {appointment.fee}</Text>
         </View>
         <View style={styles.detailItem}>
-          <Icon name={appointment.type === 'video' ? 'videocam' : 'call'} size={16} color={colors.textSecondary} />
+          <Ionicons name={appointment.type === 'video' ? 'videocam' : 'call'} size={16} color={colors.textSecondary} />
           <Text style={styles.detailText}>
             {appointment.type === 'video' ? 'Video' : 'Audio'}
           </Text>

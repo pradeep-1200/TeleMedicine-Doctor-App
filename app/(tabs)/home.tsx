@@ -1,102 +1,109 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../../constants/colors';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useAppointments } from '../../contexts/AppointmentContext';
+import AppointmentCard from '../../components/AppointmentCard';
+import { router } from 'expo-router';
 
 export default function HomeScreen() {
-  const { appointments } = useAppointments();
-  
-  const todayAppointments = appointments.filter(app => 
-    app.date === '13/09/2023' // Filter for today's date
-  );
+  const { appointments, cancelAppointment } = useAppointments();
+  const [filter, setFilter] = useState<'all' | 'today' | 'upcoming'>('all');
 
-  const upcomingAppointments = appointments.filter(app => 
-    app.status === 'booked-paid'
-  );
+  const filteredAppointments = appointments.filter(appointment => {
+    if (filter === 'today') {
+      const today = new Date().toDateString();
+      return new Date(appointment.date).toDateString() === today;
+    }
+    if (filter === 'upcoming') {
+      return appointment.status === 'booked-paid';
+    }
+    return true;
+  });
+
+  const handleStartCall = (appointmentId: string) => {
+    router.push(`/(screens)/call/${appointmentId}`);
+  };
+
+  const handleViewDetails = (appointmentId: string) => {
+    router.push(`/(screens)/appointment-details/${appointmentId}`);
+  };
+
+  const handleCancel = (appointmentId: string) => {
+    cancelAppointment(appointmentId);
+  };
 
   return (
-    <ScrollView style={styles.container}>
-      {/* Header */}
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <View>
           <Text style={styles.greeting}>Good Morning</Text>
-          <Text style={styles.name}>Dr. Prem</Text>
+          <Text style={styles.doctorName}>Dr. Prem</Text>
         </View>
-        <TouchableOpacity style={styles.profileButton}>
-          <Icon name="person" size={28} color={colors.primary} />
+        <TouchableOpacity style={styles.notificationButton}>
+          <Ionicons name="notifications" size={24} color={colors.primary} />
         </TouchableOpacity>
       </View>
 
-      {/* Stats */}
       <View style={styles.statsContainer}>
         <View style={styles.statCard}>
-          <Text style={styles.statNumber}>{todayAppointments.length}</Text>
+          <Text style={styles.statNumber}>{appointments.length}</Text>
+          <Text style={styles.statLabel}>Total Appointments</Text>
+        </View>
+        <View style={styles.statCard}>
+          <Text style={styles.statNumber}>
+            {appointments.filter(a => a.status === 'booked-paid').length}
+          </Text>
           <Text style={styles.statLabel}>Today's Appointments</Text>
         </View>
-        <View style={styles.statCard}>
-          <Text style={styles.statNumber}>{upcomingAppointments.length}</Text>
-          <Text style={styles.statLabel}>Upcoming</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Text style={styles.statNumber}>4.8</Text>
-          <Text style={styles.statLabel}>Rating</Text>
-        </View>
       </View>
 
-      {/* Today's Schedule */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Today's Schedule</Text>
-          <TouchableOpacity>
-            <Text style={styles.seeAll}>See All</Text>
-          </TouchableOpacity>
-        </View>
-        
-        {todayAppointments.length > 0 ? (
-          todayAppointments.map(appointment => (
-            <View key={appointment.id} style={styles.scheduleItem}>
-              <View style={styles.timeContainer}>
-                <Text style={styles.time}>{appointment.time}</Text>
-              </View>
-              <View style={styles.scheduleDetails}>
-                <Text style={styles.patientName}>{appointment.patientName}</Text>
-                <Text style={styles.symptom}>{appointment.symptom}</Text>
-                <View style={styles.scheduleFooter}>
-                  <Text style={styles.fee}>INR {appointment.fee}</Text>
-                  <Text style={styles.type}>{appointment.type === 'video' ? 'Video' : 'Audio'}</Text>
-                </View>
-              </View>
-            </View>
-          ))
-        ) : (
-          <Text style={styles.noAppointments}>No appointments for today</Text>
-        )}
+      <View style={styles.filterContainer}>
+        <TouchableOpacity
+          style={[styles.filterButton, filter === 'all' && styles.activeFilter]}
+          onPress={() => setFilter('all')}
+        >
+          <Text style={[styles.filterText, filter === 'all' && styles.activeFilterText]}>
+            All
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.filterButton, filter === 'today' && styles.activeFilter]}
+          onPress={() => setFilter('today')}
+        >
+          <Text style={[styles.filterText, filter === 'today' && styles.activeFilterText]}>
+            Today
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.filterButton, filter === 'upcoming' && styles.activeFilter]}
+          onPress={() => setFilter('upcoming')}
+        >
+          <Text style={[styles.filterText, filter === 'upcoming' && styles.activeFilterText]}>
+            Upcoming
+          </Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Quick Actions */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Quick Actions</Text>
-        <View style={styles.actionsGrid}>
-          <TouchableOpacity style={styles.actionButton}>
-            <Icon name="videocam" size={24} color={colors.primary} />
-            <Text style={styles.actionText}>Start Call</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
-            <Icon name="note-add" size={24} color={colors.primary} />
-            <Text style={styles.actionText}>Add Prescription</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
-            <Icon name="calendar-today" size={24} color={colors.primary} />
-            <Text style={styles.actionText}>View Calendar</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
-            <Icon name="chat" size={24} color={colors.primary} />
-            <Text style={styles.actionText}>Messages</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </ScrollView>
+      <ScrollView style={styles.appointmentsList}>
+        {filteredAppointments.map((appointment) => (
+          <AppointmentCard
+            key={appointment.id}
+            appointment={appointment}
+            onPress={() => handleViewDetails(appointment.id)}
+            onCancel={() => handleCancel(appointment.id)}
+            onStartCall={() => handleStartCall(appointment.id)}
+          />
+        ))}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -109,147 +116,68 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: colors.white,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
   },
   greeting: {
-    fontSize: 14,
+    fontSize: 16,
     color: colors.textSecondary,
   },
-  name: {
+  doctorName: {
     fontSize: 24,
-    fontWeight: '600',
+    fontWeight: 'bold',
     color: colors.text,
   },
-  profileButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.gray[100],
-    justifyContent: 'center',
-    alignItems: 'center',
+  notificationButton: {
+    padding: 8,
   },
   statsContainer: {
     flexDirection: 'row',
-    padding: 20,
-    gap: 12,
+    paddingHorizontal: 20,
+    gap: 16,
+    marginBottom: 20,
   },
   statCard: {
     flex: 1,
     backgroundColor: colors.white,
+    padding: 20,
     borderRadius: 12,
-    padding: 16,
     alignItems: 'center',
-    shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
   },
   statNumber: {
-    fontSize: 24,
-    fontWeight: '700',
+    fontSize: 32,
+    fontWeight: 'bold',
     color: colors.primary,
   },
   statLabel: {
-    fontSize: 12,
+    fontSize: 14,
     color: colors.textSecondary,
     marginTop: 4,
   },
-  section: {
-    padding: 20,
-  },
-  sectionHeader: {
+  filterContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    paddingHorizontal: 20,
     marginBottom: 16,
+    gap: 12,
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.text,
-  },
-  seeAll: {
-    fontSize: 14,
-    color: colors.primary,
-    fontWeight: '500',
-  },
-  scheduleItem: {
-    flexDirection: 'row',
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    alignItems: 'center',
-  },
-  timeContainer: {
-    marginRight: 16,
-  },
-  time: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.primary,
-  },
-  scheduleDetails: {
-    flex: 1,
-  },
-  patientName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text,
-  },
-  symptom: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    marginTop: 4,
-  },
-  scheduleFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 8,
-  },
-  fee: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.text,
-  },
-  type: {
-    fontSize: 12,
-    color: colors.textSecondary,
+  filterButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
     backgroundColor: colors.gray[100],
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 4,
   },
-  noAppointments: {
-    textAlign: 'center',
+  activeFilter: {
+    backgroundColor: colors.primary,
+  },
+  filterText: {
+    fontSize: 14,
     color: colors.textSecondary,
-    fontStyle: 'italic',
-    padding: 20,
   },
-  actionsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 16,
+  activeFilterText: {
+    color: colors.white,
   },
-  actionButton: {
-    width: '47%',
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    padding: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  actionText: {
-    marginTop: 8,
-    fontSize: 12,
-    color: colors.text,
-    fontWeight: '500',
+  appointmentsList: {
+    flex: 1,
+    paddingHorizontal: 20,
   },
 });

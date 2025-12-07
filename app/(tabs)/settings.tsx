@@ -1,79 +1,79 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { colors } from '../../constants/colors';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
 export default function SettingsScreen() {
+  const handleLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Logout', onPress: () => router.replace('/(auth)/login') },
+      ]
+    );
+  };
+
+  const settingsOptions = [
+    { id: '1', title: 'Profile Settings', icon: 'person-outline', onPress: () => router.push('/(screens)/profile') },
+    { id: '2', title: 'Availability', icon: 'time-outline', onPress: () => router.push('/(screens)/availability') },
+    { id: '3', title: 'Notifications', icon: 'notifications-outline', onPress: () => router.push('/(screens)/notifications-settings') },
+    { id: '4', title: 'Payment Settings', icon: 'card-outline', onPress: () => router.push('/(screens)/payment-settings') },
+    { id: '5', title: 'Help & Support', icon: 'help-circle-outline', onPress: () => router.push('/(screens)/help') },
+    { id: '6', title: 'Privacy Policy', icon: 'shield-outline', onPress: () => router.push('/(screens)/privacy') },
+    { id: '7', title: 'Terms of Service', icon: 'document-text-outline', onPress: () => router.push('/(screens)/terms') },
+    { id: '8', title: 'Logout', icon: 'log-out-outline', onPress: handleLogout },
+  ];
+
   return (
-    <ScrollView style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Settings</Text>
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Account</Text>
-        <TouchableOpacity style={styles.settingItem}>
-          <Icon name="person" size={24} color={colors.textSecondary} />
-          <Text style={styles.settingText}>Profile</Text>
-          <Icon name="chevron-right" size={24} color={colors.textSecondary} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.settingItem}>
-          <Icon name="security" size={24} color={colors.textSecondary} />
-          <Text style={styles.settingText}>Security</Text>
-          <Icon name="chevron-right" size={24} color={colors.textSecondary} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.settingItem}>
-          <Icon name="notifications" size={24} color={colors.textSecondary} />
-          <Text style={styles.settingText}>Notifications</Text>
-          <Icon name="chevron-right" size={24} color={colors.textSecondary} />
-        </TouchableOpacity>
-      </View>
+      <ScrollView style={styles.content}>
+        <View style={styles.profileSection}>
+          <View style={styles.profileAvatar}>
+            <Ionicons name="person" size={32} color={colors.white} />
+          </View>
+          <View style={styles.profileInfo}>
+            <Text style={styles.doctorName}>Dr. Prem</Text>
+            <Text style={styles.specialty}>Gynecology + 2 others</Text>
+            <Text style={styles.experience}>8 years experience</Text>
+          </View>
+        </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>App</Text>
-        <TouchableOpacity style={styles.settingItem}>
-          <Icon name="language" size={24} color={colors.textSecondary} />
-          <Text style={styles.settingText}>Language</Text>
-          <Icon name="chevron-right" size={24} color={colors.textSecondary} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.settingItem}>
-          <Icon name="dark-mode" size={24} color={colors.textSecondary} />
-          <Text style={styles.settingText}>Dark Mode</Text>
-          <Icon name="toggle-on" size={24} color={colors.primary} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.settingItem}>
-          <Icon name="help" size={24} color={colors.textSecondary} />
-          <Text style={styles.settingText}>Help & Support</Text>
-          <Icon name="chevron-right" size={24} color={colors.textSecondary} />
-        </TouchableOpacity>
-      </View>
+        <View style={styles.settingsSection}>
+          {settingsOptions.map((option) => (
+            <TouchableOpacity
+              key={option.id}
+              style={styles.settingItem}
+              onPress={option.onPress}
+            >
+              <View style={styles.settingLeft}>
+                <Ionicons name={option.icon as any} size={24} color={colors.primary} />
+                <Text style={styles.settingTitle}>{option.title}</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={24} color={colors.textSecondary} />
+            </TouchableOpacity>
+          ))}
+        </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>About</Text>
-        <TouchableOpacity style={styles.settingItem}>
-          <Icon name="info" size={24} color={colors.textSecondary} />
-          <Text style={styles.settingText}>About App</Text>
-          <Icon name="chevron-right" size={24} color={colors.textSecondary} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.settingItem}>
-          <Icon name="description" size={24} color={colors.textSecondary} />
-          <Text style={styles.settingText}>Terms & Conditions</Text>
-          <Icon name="chevron-right" size={24} color={colors.textSecondary} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.settingItem}>
-          <Icon name="policy" size={24} color={colors.textSecondary} />
-          <Text style={styles.settingText}>Privacy Policy</Text>
-          <Icon name="chevron-right" size={24} color={colors.textSecondary} />
-        </TouchableOpacity>
-      </View>
-
-      <TouchableOpacity style={styles.logoutButton}>
-        <Icon name="logout" size={24} color={colors.error} />
-        <Text style={styles.logoutText}>Log Out</Text>
-      </TouchableOpacity>
-
-      <Text style={styles.version}>Version 1.0.0</Text>
-    </ScrollView>
+        <View style={styles.footer}>
+          <Text style={styles.version}>Version 1.0.0</Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -83,56 +83,80 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   header: {
-    padding: 20,
-    backgroundColor: colors.white,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
   },
   title: {
     fontSize: 24,
-    fontWeight: '600',
+    fontWeight: 'bold',
     color: colors.text,
   },
-  section: {
-    backgroundColor: colors.white,
-    marginTop: 16,
-    paddingHorizontal: 16,
+  content: {
+    flex: 1,
   },
-  sectionTitle: {
+  profileSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.white,
+    paddingHorizontal: 20,
+    paddingVertical: 24,
+    marginBottom: 20,
+  },
+  profileAvatar: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  profileInfo: {
+    flex: 1,
+  },
+  doctorName: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: colors.text,
+    marginBottom: 4,
+  },
+  specialty: {
     fontSize: 14,
-    fontWeight: '600',
     color: colors.textSecondary,
-    textTransform: 'uppercase',
-    marginVertical: 16,
+    marginBottom: 2,
+  },
+  experience: {
+    fontSize: 14,
+    color: colors.textSecondary,
+  },
+  settingsSection: {
+    backgroundColor: colors.white,
+    marginBottom: 20,
   },
   settingItem: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  settingText: {
-    flex: 1,
+  settingLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  settingTitle: {
     fontSize: 16,
     color: colors.text,
     marginLeft: 16,
   },
-  logoutButton: {
-    flexDirection: 'row',
+  footer: {
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.white,
-    marginTop: 16,
-    padding: 16,
-    gap: 12,
-  },
-  logoutText: {
-    fontSize: 16,
-    color: colors.error,
-    fontWeight: '600',
+    paddingVertical: 20,
   },
   version: {
-    textAlign: 'center',
+    fontSize: 14,
     color: colors.textSecondary,
-    marginVertical: 24,
   },
 });

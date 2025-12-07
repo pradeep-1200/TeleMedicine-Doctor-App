@@ -4,7 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { colors } from '../../../constants/colors';
 import CallScreen from '../../../components/CallScreen';
 import { useAppointments } from '../../../contexts/AppointmentContext';
-import { zegoService } from '../../../services/zegoService';
+// import { zegoService } from '../../../services/zegoService';
 
 export default function VideoCallScreen() {
   const { id } = useLocalSearchParams();
@@ -34,7 +34,6 @@ export default function VideoCallScreen() {
 
     return () => {
       backHandler.remove();
-      zegoService.endCall();
     };
   }, []);
 
@@ -43,39 +42,19 @@ export default function VideoCallScreen() {
       router.back();
       return;
     }
-
-    try {
-      const success = await zegoService.startCall(
-        selectedAppointment.patientId,
-        selectedAppointment.type === 'video'
-      );
-
-      if (success) {
-        setCallStarted(true);
-      } else {
-        Alert.alert('Error', 'Failed to start call. Please try again.');
-        router.back();
-      }
-    } catch (error) {
-      console.error('Error starting call:', error);
-      Alert.alert('Error', 'Failed to start call');
-      router.back();
-    }
+    setCallStarted(true);
   };
 
   const handleEndCall = async () => {
-    await zegoService.endCall();
-    
-    // Navigate to call ended screen
     router.push(`/call-ended/${id}`);
   };
 
   const handleToggleMute = async (muted: boolean) => {
-    await zegoService.toggleMic(muted);
+    console.log('Toggle mute:', muted);
   };
 
   const handleToggleCamera = async (cameraOn: boolean) => {
-    await zegoService.toggleCamera(cameraOn);
+    console.log('Toggle camera:', cameraOn);
   };
 
   if (!selectedAppointment) {

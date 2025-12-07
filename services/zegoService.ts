@@ -8,21 +8,26 @@ class ZegoService {
   private userName: string = 'Doctor';
 
   initialize() {
-    if (!this.zego) {
-      this.zego = new ZegoExpressEngine(zegoConfig.appID, zegoConfig.appSign);
-      
-      // Enable video call
-      this.zego.enableCamera(true);
-      this.zego.enableMic(true);
-      
-      // Set video configuration
-      this.zego.setVideoConfig({
-        preset: 2, // 720p
-        bitrate: 600,
-        fps: 15,
-        width: 360,
-        height: 640,
-      });
+    if (!this.zego && zegoConfig.appID && zegoConfig.appSign) {
+      try {
+        this.zego = new ZegoExpressEngine(zegoConfig.appID, zegoConfig.appSign);
+        
+        // Enable video call
+        this.zego.enableCamera(true);
+        this.zego.enableMic(true);
+        
+        // Set video configuration
+        this.zego.setVideoConfig({
+          preset: 2, // 720p
+          bitrate: 600,
+          fps: 15,
+          width: 360,
+          height: 640,
+        });
+      } catch (error) {
+        console.error('Failed to initialize Zego SDK:', error);
+        this.zego = null;
+      }
     }
     return this.zego;
   }

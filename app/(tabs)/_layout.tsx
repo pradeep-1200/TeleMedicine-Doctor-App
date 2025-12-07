@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
-import { colors } from '../../constants/colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { colors } from '../../constants/colors';
 
 export default function TabLayout() {
   return (
@@ -10,13 +10,7 @@ export default function TabLayout() {
         tabBarInactiveTintColor: colors.textSecondary,
         tabBarStyle: {
           backgroundColor: colors.white,
-          borderTopWidth: 1,
           borderTopColor: colors.border,
-          height: 60,
-        },
-        tabBarLabelStyle: {
-          fontSize: 12,
-          marginBottom: 4,
         },
         headerShown: false,
       }}

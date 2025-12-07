@@ -1,51 +1,57 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { Appointment } from '../types';
+import { dummyAppointments } from '../constants/data';
+import { storage, StorageKeys } from '../utils/storage';
 
 interface AppointmentContextType {
   appointments: Appointment[];
-  selectedAppointment: Appointment | null;
-  setSelectedAppointment: (appointment: Appointment | null) => void;
+  getAppointment: (id: string) => Appointment | undefined;
   updateAppointment: (id: string, updates: Partial<Appointment>) => void;
+  cancelAppointment: (id: string) => void;
 }
 
 const AppointmentContext = createContext<AppointmentContextType | undefined>(undefined);
 
-export const AppointmentProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [appointments, setAppointments] = useState<Appointment[]>([
-    // Initial dummy data
-    {
-      id: '1',
-      patientName: 'Jay Patil',
-      patientId: 'APPLE112349087',
-      symptom: 'Hairfall',
-      status: 'booked-paid',
-      date: '13/09/2023',
-      time: '10:30 AM',
-      fee: 800,
-      type: 'video',
-      appointmentType: 'Paid Video',
-      bookingStatus: 'Confirmed',
-      routineStatus: 'Not Assigned',
-    },
-  ]);
+export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
 
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  useEffect(() => {
+    loadAppointments();
+  }, []);
 
-  const updateAppointment = (id: string, updates: Partial<Appointment>) => {
-    setAppointments(prev =>
-      prev.map(app =>
-        app.id === id ? { ...app, ...updates } : app
-      )
+  const loadAppointments = async () => {
+    const stored = await storage.getItem<Appointment[]>(StorageKeys.APPOINTMENTS);
+    if (stored) {
+      setAppointments(stored);
+    } else {
+      setAppointments(dummyAppointments);
+      await storage.setItem(StorageKeys.APPOINTMENTS, dummyAppointments);
+    }
+  };
+
+  const getAppointment = (id: string) => {
+    return appointments.find(appointment => appointment.id === id);
+  };
+
+  const updateAppointment = async (id: string, updates: Partial<Appointment>) => {
+    const updated = appointments.map(appointment =>
+      appointment.id === id ? { ...appointment, ...updates } : appointment
     );
+    setAppointments(updated);
+    await storage.setItem(StorageKeys.APPOINTMENTS, updated);
+  };
+
+  const cancelAppointment = (id: string) => {
+    updateAppointment(id, { status: 'cancelled' });
   };
 
   return (
     <AppointmentContext.Provider
       value={{
         appointments,
-        selectedAppointment,
-        setSelectedAppointment,
+        getAppointment,
         updateAppointment,
+        cancelAppointment,
       }}
     >
       {children}
@@ -55,8 +61,8 @@ export const AppointmentProvider: React.FC<{ children: ReactNode }> = ({ childre
 
 export const useAppointments = () => {
   const context = useContext(AppointmentContext);
-  if (!context) {
-    throw new Error('useAppointments must be used within AppointmentProvider');
+  if (context === undefined) {
+    throw new Error('useAppointments must be used within an AppointmentProvider');
   }
   return context;
 };

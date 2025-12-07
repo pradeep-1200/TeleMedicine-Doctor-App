@@ -1,3 +1,4 @@
+import React, { useMemo } from 'react';
 import { StyleSheet, Text, type TextProps } from 'react-native';
 
 import { useThemeColor } from '@/hooks/use-theme-color';
@@ -16,21 +17,13 @@ export function ThemedText({
   ...rest
 }: ThemedTextProps) {
   const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+  
+  const computedStyle = useMemo(() => {
+    const typeStyle = styles[type] || styles.default;
+    return [{ color }, typeStyle, style];
+  }, [color, type, style]);
 
-  return (
-    <Text
-      style={[
-        { color },
-        type === 'default' ? styles.default : undefined,
-        type === 'title' ? styles.title : undefined,
-        type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
-        type === 'subtitle' ? styles.subtitle : undefined,
-        type === 'link' ? styles.link : undefined,
-        style,
-      ]}
-      {...rest}
-    />
-  );
+  return <Text style={computedStyle} {...rest} />;
 }
 
 const styles = StyleSheet.create({

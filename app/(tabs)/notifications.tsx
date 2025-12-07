@@ -1,40 +1,52 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView,
+} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { colors } from '../../constants/colors';
 import { dummyNotifications } from '../../constants/data';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
 export default function NotificationsScreen() {
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Notifications</Text>
-        <Text style={styles.clearAll}>Clear All</Text>
+        <TouchableOpacity>
+          <Text style={styles.markAllRead}>Mark all read</Text>
+        </TouchableOpacity>
       </View>
-      
-      <ScrollView style={styles.content}>
+
+      <ScrollView style={styles.notificationsList}>
         {dummyNotifications.map((notification) => (
-          <View key={notification.id} style={styles.notificationCard}>
-            <View style={styles.notificationHeader}>
-              <Icon 
-                name={
-                  notification.type === 'appointment' ? 'calendar-today' :
-                  notification.type === 'message' ? 'message' : 'info'
-                } 
-                size={24} 
-                color={colors.primary} 
+          <TouchableOpacity
+            key={notification.id}
+            style={[
+              styles.notificationItem,
+              !notification.read && styles.unreadNotification,
+            ]}
+          >
+            <View style={styles.notificationIcon}>
+              <Icon
+                name={notification.type === 'appointment' ? 'event' : 'info'}
+                size={24}
+                color={colors.primary}
               />
-              <View style={styles.notificationInfo}>
-                <Text style={styles.notificationTitle}>{notification.title}</Text>
-                <Text style={styles.notificationTime}>{notification.time}</Text>
-              </View>
-              {!notification.read && <View style={styles.unreadDot} />}
             </View>
-            <Text style={styles.notificationMessage}>{notification.message}</Text>
-          </View>
+            <View style={styles.notificationContent}>
+              <Text style={styles.notificationTitle}>{notification.title}</Text>
+              <Text style={styles.notificationMessage}>{notification.message}</Text>
+              <Text style={styles.notificationTime}>{notification.time}</Text>
+            </View>
+            {!notification.read && <View style={styles.unreadDot} />}
+          </TouchableOpacity>
         ))}
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -47,57 +59,67 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: colors.white,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
   },
   title: {
     fontSize: 24,
-    fontWeight: '600',
+    fontWeight: 'bold',
     color: colors.text,
   },
-  clearAll: {
+  markAllRead: {
     fontSize: 14,
     color: colors.primary,
-    fontWeight: '500',
+    fontWeight: '600',
   },
-  content: {
+  notificationsList: {
     flex: 1,
-    padding: 16,
   },
-  notificationCard: {
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-  },
-  notificationHeader: {
+  notificationItem: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
+    alignItems: 'flex-start',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+    backgroundColor: colors.white,
   },
-  notificationInfo: {
+  unreadNotification: {
+    backgroundColor: colors.gray[50],
+  },
+  notificationIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.gray[100],
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  notificationContent: {
     flex: 1,
-    marginLeft: 12,
   },
   notificationTitle: {
     fontSize: 16,
     fontWeight: '600',
     color: colors.text,
+    marginBottom: 4,
+  },
+  notificationMessage: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    lineHeight: 20,
+    marginBottom: 8,
   },
   notificationTime: {
     fontSize: 12,
     color: colors.textSecondary,
-    marginTop: 2,
   },
   unreadDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
     backgroundColor: colors.primary,
-  },
-  notificationMessage: {
-    fontSize: 14,
-    color: colors.text,
-    lineHeight: 20,
+    marginTop: 8,
   },
 });

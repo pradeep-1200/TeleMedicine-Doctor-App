@@ -9,17 +9,18 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { colors } from '../../../constants/colors';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { Ionicons } from '@expo/vector-icons';
 import CollapsibleSection from '../../../components/CollapsibleSection';
 import { useAppointments } from '../../../contexts/AppointmentContext';
 
 export default function AppointmentDetailScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
-  const { selectedAppointment } = useAppointments();
+  const { getAppointment } = useAppointments();
+  const appointment = getAppointment(id as string);
   const [prescription, setPrescription] = useState('');
 
-  if (!selectedAppointment) {
+  if (!appointment) {
     return (
       <View style={styles.container}>
         <Text>Appointment not found</Text>
@@ -32,7 +33,7 @@ export default function AppointmentDetailScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Icon name="arrow-back" size={24} color={colors.text} />
+          <Ionicons name="arrow-back" size={24} color={colors.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Appointment Details</Text>
         <View style={styles.placeholder} />
@@ -42,12 +43,12 @@ export default function AppointmentDetailScreen() {
       <View style={styles.patientInfo}>
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>
-            {selectedAppointment.patientName.charAt(0)}
+            {appointment.patientName.charAt(0)}
           </Text>
         </View>
         <View style={styles.patientDetails}>
-          <Text style={styles.patientName}>{selectedAppointment.patientName}</Text>
-          <Text style={styles.patientId}>ID: {selectedAppointment.patientId}</Text>
+          <Text style={styles.patientName}>{appointment.patientName}</Text>
+          <Text style={styles.patientId}>ID: {appointment.patientId}</Text>
         </View>
       </View>
 
@@ -55,75 +56,66 @@ export default function AppointmentDetailScreen() {
       <CollapsibleSection title="Appointment Details">
         <View style={styles.detailRow}>
           <Text style={styles.detailLabel}>Patient Name:</Text>
-          <Text style={styles.detailValue}>{selectedAppointment.patientId}</Text>
+          <Text style={styles.detailValue}>{appointment.patientName}</Text>
         </View>
         <View style={styles.detailRow}>
           <Text style={styles.detailLabel}>Appointment Type:</Text>
-          <Text style={styles.detailValue}>{selectedAppointment.appointmentType}</Text>
+          <Text style={styles.detailValue}>{appointment.appointmentType}</Text>
         </View>
         <View style={styles.detailRow}>
           <Text style={styles.detailLabel}>Appointment Fee:</Text>
-          <Text style={styles.detailValue}>INR {selectedAppointment.fee}</Text>
+          <Text style={styles.detailValue}>INR {appointment.fee}</Text>
         </View>
         <View style={styles.detailRow}>
           <Text style={styles.detailLabel}>Appointment Date:</Text>
-          <Text style={styles.detailValue}>{selectedAppointment.date}</Text>
+          <Text style={styles.detailValue}>{appointment.date}</Text>
         </View>
         <View style={styles.detailRow}>
           <Text style={styles.detailLabel}>Appointment Time:</Text>
-          <Text style={styles.detailValue}>{selectedAppointment.time}</Text>
+          <Text style={styles.detailValue}>{appointment.time}</Text>
         </View>
         <View style={styles.detailRow}>
           <Text style={styles.detailLabel}>Booking Status:</Text>
-          <Text style={styles.detailValue}>{selectedAppointment.bookingStatus}</Text>
+          <Text style={styles.detailValue}>{appointment.bookingStatus}</Text>
         </View>
         <View style={styles.detailRow}>
           <Text style={styles.detailLabel}>Routine Status:</Text>
-          <Text style={styles.detailValue}>{selectedAppointment.routineStatus}</Text>
+          <Text style={styles.detailValue}>{appointment.routineStatus}</Text>
         </View>
       </CollapsibleSection>
 
       {/* Symptom Details */}
-      {selectedAppointment.symptoms && (
+      {appointment.symptoms && (
         <CollapsibleSection title="Symptom Details">
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Symptoms:</Text>
-            <Text style={styles.detailValue}>{selectedAppointment.symptoms.symptom}</Text>
+            <Text style={styles.detailValue}>{appointment.symptoms.symptom}</Text>
           </View>
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Description:</Text>
-            <Text style={styles.detailValue}>{selectedAppointment.symptoms.description}</Text>
+            <Text style={styles.detailValue}>{appointment.symptoms.description}</Text>
           </View>
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Severity:</Text>
-            <Text style={styles.detailValue}>{selectedAppointment.symptoms.severity}</Text>
+            <Text style={styles.detailValue}>{appointment.symptoms.severity}</Text>
           </View>
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Symptom Duration:</Text>
-            <Text style={styles.detailValue}>{selectedAppointment.symptoms.duration}</Text>
+            <Text style={styles.detailValue}>{appointment.symptoms.duration}</Text>
           </View>
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Sleep Pattern:</Text>
-            <Text style={styles.detailValue}>{selectedAppointment.symptoms.sleepPattern}</Text>
-          </View>
+          {appointment.symptoms.sleepPattern && (
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Sleep Pattern:</Text>
+              <Text style={styles.detailValue}>{appointment.symptoms.sleepPattern}</Text>
+            </View>
+          )}
         </CollapsibleSection>
       )}
 
       {/* Medical Reports */}
       <CollapsibleSection title="Medical Reports">
         <View style={styles.reportsContainer}>
-          {selectedAppointment.medicalReports ? (
-            selectedAppointment.medicalReports.map((report, index) => (
-              <Image
-                key={index}
-                source={{ uri: report }}
-                style={styles.reportImage}
-                resizeMode="cover"
-              />
-            ))
-          ) : (
-            <Text style={styles.noDataText}>No medical reports uploaded</Text>
-          )}
+          <Text style={styles.noDataText}>No medical reports uploaded</Text>
         </View>
       </CollapsibleSection>
 
@@ -131,10 +123,7 @@ export default function AppointmentDetailScreen() {
       <CollapsibleSection title="Add Prescription">
         <TouchableOpacity
           style={styles.prescriptionButton}
-          onPress={() => {
-            // Navigate to prescription form
-            console.log('Add prescription');
-          }}
+          onPress={() => router.push(`/(screens)/prescription/${appointment.id}`)}
         >
           <Text style={styles.prescriptionButtonText}>
             {prescription ? 'Update Prescription' : 'Add Prescription'}
@@ -149,7 +138,7 @@ export default function AppointmentDetailScreen() {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.callButton}
-          onPress={() => router.push(`/video-call/${selectedAppointment.id}`)}
+          onPress={() => router.push(`/(screens)/call/${appointment.id}`)}
         >
           <Text style={styles.callButtonText}>Start Call</Text>
         </TouchableOpacity>

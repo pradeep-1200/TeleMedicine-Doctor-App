@@ -16,21 +16,8 @@ export interface Appointment {
     description: string;
     severity: 'mild' | 'moderate' | 'severe';
     duration: string;
-    sleepPattern: string;
+    sleepPattern?: string;
   };
-  coupon?: {
-    code: string;
-    description: string;
-    discount: number;
-  };
-  bookingDetails?: {
-    bookedBy: string;
-    bookingDate: string;
-    bookingTime: string;
-    paymentDate: string;
-    paymentTime: string;
-  };
-  medicalReports?: string[];
 }
 
 export interface Notification {
@@ -39,22 +26,20 @@ export interface Notification {
   message: string;
   time: string;
   read: boolean;
-  type: 'appointment' | 'message' | 'system';
+  type: 'appointment' | 'system';
 }
 
-export interface User {
+export interface Prescription {
   id: string;
-  name: string;
-  role: 'doctor' | 'patient';
-  specialization?: string;
-  walletBalance: number;
+  appointmentId: string;
+  medicines: Medicine[];
+  notes: string;
+  createdAt: string;
 }
 
-export interface CallData {
-  appointmentId: string;
-  patientName: string;
-  patientId: string;
-  callType: 'video' | 'audio';
-  duration?: number;
-  endReason?: 'completed' | 'low-balance' | 'patient-unavailable' | 'patient-ended';
+export interface Medicine {
+  name: string;
+  dosage: string;
+  frequency: string;
+  duration: string;
 }
